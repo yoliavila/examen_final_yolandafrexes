@@ -2,6 +2,13 @@ package entidades;
 
 
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.ObjectOutputStream;
+import java.io.PrintWriter;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
@@ -125,44 +132,98 @@ ret += this.getId() + "|" + this.getNombre() + "|"
 return ret;
 }
 
-public void mostrarCompleto() {
-String cad = "";
-cad += "Id de socio: "+ this.getId() + "\n";
-cad += "Nombre de socio: "+ this.getNombre() +"\n";
-cad += "Fecha nacimiento de socio: " + this.getFechanac() + "\n";
-cad += "Fecha de alta de socio: "+ this.getFechaalta() + "\n";
-cad += "Id de la categoría: "+ this.getCategoria().getId() + "\n";
+public String mostrarCompleto() {
+String com = "";
+com += "Id de socio: " + this.getId() + "\n";
+com += "Nombre de socio: " + this.getNombre() + "\n";
+com += "Fecha nacimiento de socio: " + this.getFechanac() + "\n";
+com += "Fecha de alta de socio: " + this.getFechaalta() + "\n";
+com += "Id de la categoría: " + this.getCategoria().getId() + "\n";
 
 
 
-if(this.mascotas!= null) {
+if (this.mascotas != null) {
 for (Mascota m : mascotas) {
-System.out.println(m.getId() + "\t" + m.getNombre() + "\t" );
+System.out.println(m.getId() + "\t" + m.getNombre() + "\t");
 }
-}
-else {
+} else {
 System.out.println("Este socio no tiene mascotas");
 }
-System.out.println(cad);
-}
-
-
-
-
-@Override
-public boolean exportarBinario(Socio elemento, String path) {
-// TODO Auto-generated method stub
-return false;
+return com;
 }
 
 
 
 @Override
-public boolean exportarTexto(Socio elemento, String path) {
-// TODO Auto-generated method stub
+public boolean exportarBinario(Socio s, String path) {
+path = "operario.dat";
+try {
+File fichero = new File(path);
+FileOutputStream fos = new FileOutputStream(path, false);
+ObjectOutputStream escritor = new ObjectOutputStream(fos);
+escritor.writeObject(s.data());
+escritor.flush();
+escritor.close();
+} catch (FileNotFoundException e) {
+System.out.println("Se ha producido una FileNotFoundException" + e.getMessage());
+return false;
+} catch (IOException e) {
+System.out.println("Se ha producido una IOException" + e.getMessage());
+return false;
+
+
+
+} catch (Exception e) {
+System.out.println("Se ha producido una Exception" + e.getMessage());
+return false;
+
+
+
+}
+return true;
+
+
+
+}
+
+
+@Override
+public boolean exportarTexto(Socio s, String path) {
+path = "Socio.txt";
+File fichero = new File(path);
+FileWriter escritor = null;
+PrintWriter buffer = null;
+try {
+try {
+escritor = new FileWriter(fichero, false);
+buffer = new PrintWriter(escritor);
+buffer.println(s.mostrarCompleto());
+
+
+
+} finally {
+if (buffer != null) {
+buffer.close();
+}
+if (escritor != null) {
+escritor.close();
+}
+}
+
+
+
+} catch (FileNotFoundException ex) {
+System.out.println("Se ha producido una FileNotFoundException" + ex.getMessage());
+return false;
+} catch (IOException ex) {
+System.out.println("Se ha producido una IOException" + ex.getMessage());
+return false;
+} catch (Exception ex) {
+System.out.println("Se ha producido una Exception" + ex.getMessage());
 return false;
 }
-
-
-
+return true;
 }
+}
+
+
